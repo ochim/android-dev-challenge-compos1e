@@ -18,11 +18,20 @@ package com.example.androiddevchallenge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavType
+import androidx.navigation.compose.*
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
 class MainActivity : AppCompatActivity() {
@@ -30,32 +39,124 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyTheme {
-                MyApp()
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                Text(text = "Puppy adoption app")
+                            }
+                        )
+                    }
+                ) {
+                    val navController = rememberNavController()
+                    NavHost(navController, startDestination = "list") {
+                        composable(
+                            route = "list",
+                        ) {
+                            PuppyList(onClick = {
+                                navController.navigate("detail/$it")
+                            })
+                        }
+                        composable(
+                            route = "detail/{index}",
+                            arguments = listOf(
+                                navArgument("index") {
+                                    type = NavType.StringType
+                                }
+                            )
+                        ) { backStackEntry ->
+                            val index = backStackEntry
+                                .arguments?.getString("index")
+                                ?.toInt() ?: throw IllegalArgumentException()
+                            PuppyDetail(
+                                index
+                            )
+                        }
+                    }
+                }
             }
+        }
+    }
+
+}
+
+@Composable
+fun PuppyList(onClick: (Int) -> Unit) {
+    LazyColumn(modifier = Modifier.padding(16.dp)) {
+        items(puppies.size) { index ->
+            Card(
+                modifier = Modifier
+                    .clickable { onClick(index) }
+                    .padding(4.dp)
+                    .fillMaxWidth(),
+                elevation = 4.dp
+            ) {
+                val p = puppies[index]
+                Row {
+                    Text(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .size(30.dp),
+                        text = p.image,
+                        style = TextStyle(fontSize = 24.sp)
+                    )
+                    Spacer(modifier = Modifier.size(4.dp))
+                    Text(
+                        modifier = Modifier,
+                        text = p.name,
+                        style = MaterialTheme.typography.h4
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.size(4.dp))
         }
     }
 }
 
-// Start building your app here!
 @Composable
-fun MyApp() {
-    Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
+private fun PuppyDetail(index: Int) {
+    val puppy = puppies[index]
+    Column(
+        Modifier
+            .padding(8.dp)
+            .background(color = MaterialTheme.colors.surface)
+            .fillMaxWidth()
+    ) {
+        Text(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally),
+            text = puppy.image,
+            style = TextStyle(fontSize = 80.sp)
+        )
+        Text(
+            modifier = Modifier
+                .padding(16.dp),
+            text = "name: ${puppy.name}",
+            style = MaterialTheme.typography.h6
+        )
+        Text(
+            modifier = Modifier
+                .padding(16.dp),
+            text = "age: ${puppy.age}",
+            style = MaterialTheme.typography.h6
+        )
     }
 }
 
-@Preview("Light Theme", widthDp = 360, heightDp = 640)
+
+@Preview(showBackground = true)
 @Composable
-fun LightPreview() {
+fun PreviewList() {
     MyTheme {
-        MyApp()
+        PuppyList {
+        }
     }
 }
 
-@Preview("Dark Theme", widthDp = 360, heightDp = 640)
+@Preview(showBackground = true)
 @Composable
-fun DarkPreview() {
-    MyTheme(darkTheme = true) {
-        MyApp()
+fun PreviewDetail() {
+    MyTheme {
+        PuppyDetail(index = 0)
     }
 }
