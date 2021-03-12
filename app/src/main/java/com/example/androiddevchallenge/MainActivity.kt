@@ -117,11 +117,18 @@ fun PuppyList(onClick: (Int) -> Unit) {
                         style = TextStyle(fontSize = 24.sp)
                     )
                     Spacer(modifier = Modifier.size(4.dp))
-                    Text(
-                        modifier = Modifier,
-                        text = p.name,
-                        style = MaterialTheme.typography.h4
-                    )
+                    Column {
+                        Text(
+                            modifier = Modifier,
+                            text = p.name,
+                            style = MaterialTheme.typography.h6
+                        )
+                        Text(
+                            modifier = Modifier,
+                            text = p.sex,
+                            style = MaterialTheme.typography.body2
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.size(4.dp))
