@@ -27,6 +27,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -135,6 +137,7 @@ private fun PuppyDetail(index: Int) {
             .padding(8.dp)
             .background(color = MaterialTheme.colors.surface)
             .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
     ) {
         Text(
             modifier = Modifier
@@ -152,6 +155,18 @@ private fun PuppyDetail(index: Int) {
             modifier = Modifier
                 .padding(16.dp),
             text = "age: ${puppy.age}",
+            style = MaterialTheme.typography.h6
+        )
+        Text(
+            modifier = Modifier
+                .padding(16.dp),
+            text = "sex: ${puppy.sex}",
+            style = MaterialTheme.typography.h6
+        )
+        Text(
+            modifier = Modifier
+                .padding(16.dp),
+            text = puppy.description,
             style = MaterialTheme.typography.h6
         )
     }
